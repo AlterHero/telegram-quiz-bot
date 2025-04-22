@@ -10,13 +10,16 @@ from questions import quiz_data
 
 nest_asyncio.apply()
 logging.basicConfig(level=logging.INFO)
+
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
 @dp.message(Command('start'))
 async def cmd_start(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(types.KeyboardButton(text="Начать игру"))
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=[[types.KeyboardButton(text="Начать игру")]],
+        resize_keyboard=True
+    )
     await message.answer("Добро пожаловать в квиз!", reply_markup=keyboard)
 
 @dp.message(F.text.casefold() == "начать игру")
@@ -30,20 +33,17 @@ async def start_quiz_button_handler(message: types.Message):
 async def send_question(message, index=None):
     if index is None:
         index = await get_quiz_index(message.from_user.id)
-    print(f"[DEBUG] Текущий индекс: {index}")
-    print(f"[DEBUG] Всего вопросов: {len(quiz_data)}")
-    await message.answer(quiz_data[index]['question'], reply_markup=generate_options_keyboard(index))
+    await message.answer(
+        quiz_data[index]['question'],
+        reply_markup=generate_options_keyboard(index)
+    )
 
 @dp.callback_query(lambda c: c.data and c.data in {"correct", "wrong"})
 async def handle_answer(callback: types.CallbackQuery):
-    print(f"[DEBUG] callback.data = {callback.data}")
     question_index = await get_quiz_index(callback.from_user.id)
-
     await callback.message.edit_text(f"{quiz_data[question_index]['question']}")
 
-    score = await get_score(callback.from_user.id)
-    if score is None:
-        score = 0
+    score = await get_score(callback.from_user.id) or 0
 
     if callback.data == "correct":
         await callback.message.answer("Верно!")
@@ -64,14 +64,14 @@ async def handle_answer(callback: types.CallbackQuery):
             f"Вы набрали {final_score} из {len(quiz_data)} баллов!"
         )
 
-@dp.callback_query()
-async def fallback_handler(callback: types.CallbackQuery):
-    print(f"[DEBUG fallback] callback.data = {callback.data}")
-    await callback.answer("Неизвестная кнопка")
-
 async def main():
     await create_table()
+    await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    async def startup():
+        await bot.delete_webhook(drop_pending_updates=True)
+        await main()
+
+    asyncio.run(startup())
