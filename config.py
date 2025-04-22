@@ -1,2 +1,2 @@
-API_TOKEN = '7977415608:AAGZYglzNrDAHJkg0s9rOR40AfSx58PgIXE'
+API_TOKEN = 'ВАШ_ТОКЕН'
 DB_NAME = 'quiz_bot.db'
