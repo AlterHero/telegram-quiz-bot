@@ -33,6 +33,13 @@ python -m venv .venv
 
 ```bash
 pip install -r requirements.txt
+или выполни установку вручную:
+pip install aiofiles-23.2.1-py3-none-any.whl
+pip install aiohttp-3.9.3-cp311-cp311-win_amd64.whl
+pip install magic_filter-1.0.11-py3-none-any.whl
+pip install aiogram-3.4.1-py3-none-any.whl
+pip install nest_asyncio
+pip install aiosqlite
 ```
 
 4. **Создай файл `config.py`:**
