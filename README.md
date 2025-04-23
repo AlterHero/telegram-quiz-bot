@@ -85,7 +85,7 @@ python bot.py
 ---
 
 ## 🧠 Автор
-- Telegram: [@AlterHero](https://t.me/AlterHero)
+- Telegram: [@ifiwant](https://t.me/ifiwant)
 - GitHub: [github.com/AlterHero](https://github.com/AlterHero)
 
 ---
